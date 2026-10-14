@@ -112,25 +112,25 @@ do
     echo "Press 3 To  Start MAIL Bomber (Not Yet Available)"
     echo "Press 4 To  Update (Works On Linux And Linux Emulators) "
     echo "Press 5 To  Exit "
-    read ch
+    read -r ch
     clear
-    if [ $ch -eq 1 ];then
+    if [ "$ch" = "1" ]; then
         $PYTHON bomber.py --sms
         exit
-    elif [ $ch -eq 2 ];then
+    elif [ "$ch" = "2" ]; then
         $PYTHON bomber.py --call
         exit
-    elif [ $ch -eq 3 ];then
+    elif [ "$ch" = "3" ]; then
         $PYTHON bomber.py --mail
         exit
-    elif [ $ch -eq 4 ];then
+    elif [ "$ch" = "4" ]; then
         echo -e "\e[1;34m Downloading Latest Files..."
         rm -f .update
         $PYTHON bomber.py --update
         echo -e "\e[1;34m RUN TBomb Again..."
         pause
         exit
-    elif [ $ch -eq 5 ];then
+    elif [ "$ch" = "5" ]; then
         banner
         exit
     else
