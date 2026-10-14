@@ -109,6 +109,7 @@ def do_zip_update():
                     if not filename[1]:
                         continue
                     new_filename = os.path.join(
+                        _BASE_DIR,
                         filename[0].replace(dir_name, "."),
                         filename[1])
                     parent_dir = os.path.dirname(new_filename)
@@ -334,6 +335,8 @@ def selectnode(mode="sms"):
                 message = ("Enter number of {type}".format(type=mode.upper()) +
                            " to send (Max {limit}): ".format(limit=limit))
                 count = int(input(mesgdcrt.CommandMessage(message)).strip())
+                if count < 0:
+                    raise ValueError("Negative count")
                 if count > limit or count == 0:
                     mesgdcrt.WarningMessage("You have requested " + str(count)
                                             + " {type}".format(
@@ -345,6 +348,8 @@ def selectnode(mode="sms"):
                 delay = float(input(
                     mesgdcrt.CommandMessage("Enter delay time (in seconds): "))
                     .strip())
+                if delay < 0:
+                    raise ValueError("Negative delay")
                 # delay = 0
                 max_thread_limit = (count//10) if (count//10) > 0 else 1
                 max_threads = int(input(
@@ -354,8 +359,6 @@ def selectnode(mode="sms"):
                     .strip())
                 max_threads = max_threads if (
                     max_threads > 0) else max_thread_limit
-                if (count < 0 or delay < 0):
-                    raise Exception
                 break
             except KeyboardInterrupt as ki:
                 raise ki
