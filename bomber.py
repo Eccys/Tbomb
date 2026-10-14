@@ -30,15 +30,19 @@ except ImportError:
     sys.exit(1)
 
 
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 def readisdc():
-    with open("isdcodes.json") as file:
+    with open(os.path.join(_BASE_DIR, "isdcodes.json"), encoding="utf-8") as file:
         isdcodes = json.load(file)
     return isdcodes
 
 
 def get_version():
     try:
-        return open(".version", "r").read().strip()
+        with open(os.path.join(_BASE_DIR, ".version"), "r", encoding="utf-8") as file:
+            return file.read().strip()
     except Exception:
         return '1.0'
 
@@ -107,6 +111,9 @@ def do_zip_update():
                     new_filename = os.path.join(
                         filename[0].replace(dir_name, "."),
                         filename[1])
+                    parent_dir = os.path.dirname(new_filename)
+                    if parent_dir:
+                        os.makedirs(parent_dir, exist_ok=True)
                     source = zip_file.open(member)
                     target = open(new_filename, "wb")
                     with source, target:
