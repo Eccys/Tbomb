@@ -46,3 +46,24 @@ def test_api_provider_selects_first_index_and_handles_removal(monkeypatch):
     # Next hit tries 'p1' (now at index 0) and succeeds
     assert api.hit() is True
     assert called_urls[-1] == "https://example.com/2/9876543210"
+
+
+def test_api_provider_removes_provider_on_network_exception(monkeypatch):
+    api = APIProvider("91", "9876543210", "sms", delay=0)
+    APIProvider.api_providers = [
+        {"name": "dead", "url": "https://dead.invalid/{target}", "method": "GET", "identifier": "ok"},
+        {"name": "alive", "url": "https://alive.example/{target}", "method": "GET", "identifier": "ok"},
+    ]
+
+    def fake_request(**kwargs):
+        if "dead.invalid" in kwargs["url"]:
+            raise RuntimeError("Connection timeout")
+        return DummyResponse("ok")
+
+    monkeypatch.setattr(provider.requests, "request", fake_request)
+
+    assert api.hit() is False
+    assert len(APIProvider.api_providers) == 1
+    assert APIProvider.api_providers[0]["name"] == "alive"
+    assert api.hit() is True
+

@@ -78,8 +78,11 @@ class APIProvider:
         identifier = self.config.pop("identifier", "").lower()
         self.config.pop('name', None)
         self.config['timeout'] = 30
-        response = requests.request(**self.config)
-        return identifier in response.text.lower()
+        try:
+            response = requests.request(**self.config)
+            return identifier in response.text.lower()
+        except Exception:
+            return False
 
     def hit(self):
         if not APIProvider.status:
